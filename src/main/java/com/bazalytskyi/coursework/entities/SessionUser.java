@@ -1,5 +1,7 @@
 package com.bazalytskyi.coursework.entities;
 
+import com.bazalytskyi.coursework.services.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,11 +11,17 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class CustomUserPrincipal implements UserDetails {
+public class SessionUser implements UserDetails {
     private UserEntity user;
+    @Autowired
+    private IUserService userService;
 
-    public CustomUserPrincipal(UserEntity user){
+    public SessionUser(UserEntity user){
         this.user = user;
+    }
+
+    public SessionUser(long id, String subject, List<GrantedAuthority> grantedAuthorities) {
+        this.user=userService.getUserById(id);
     }
 
     @Override
@@ -37,7 +45,7 @@ public class CustomUserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return user.isTokenExpired();
     }
 
     public UserEntity getUser() {
@@ -51,11 +59,11 @@ public class CustomUserPrincipal implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return user.isTokenExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return user.isEnabled();
     }
 }

@@ -1,6 +1,6 @@
 package com.bazalytskyi.coursework.client;
 
-import com.bazalytskyi.coursework.entities.UserDto;
+import com.bazalytskyi.coursework.entities.UserEntity;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,13 +12,13 @@ public class RestClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:8082/signup";
-        UserDto obj = new UserDto();
-        obj.setEmail("vbazalickyi");
+        UserEntity obj = new UserEntity();
+        obj.setEmail("vb");
         obj.setPassword("111");
         obj.setUsername("Baza");
-        obj.setRole("ROLE_ADMIN");
 
-        HttpEntity<UserDto> requestEntity = new HttpEntity<UserDto>(obj, headers);
+
+        HttpEntity<UserEntity> requestEntity = new HttpEntity<UserEntity>(obj, headers);
         restTemplate.put(url, requestEntity);
     }
 

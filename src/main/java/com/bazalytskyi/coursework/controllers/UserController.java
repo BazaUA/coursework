@@ -1,5 +1,6 @@
 package com.bazalytskyi.coursework.controllers;
 
+import com.bazalytskyi.coursework.entities.SessionUser;
 import com.bazalytskyi.coursework.entities.UserDto;
 import com.bazalytskyi.coursework.entities.UserEntity;
 import com.bazalytskyi.coursework.services.CustomUserDetailsService;
@@ -8,9 +9,10 @@ import com.bazalytskyi.coursework.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserController {
@@ -24,12 +26,13 @@ public class UserController {
     UserService userService;
 
 
-//    @GetMapping(value = "/login", produces = "application/json")
-//    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-//    public void login(HttpServletResponse response) {
-//        CustomUserPrincipal user = (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        tokenAuthenticationService.addAuthentication(response, user);
-//    }
+    @RequestMapping(value = "/login", produces = "application/json", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void login(HttpServletResponse response) {
+        SessionUser user = (SessionUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(user.getUser().toString());
+        tokenAuthenticationService.addAuthentication(response, user);
+    }
 
     @PutMapping(value = "/signup", produces = "application/json")
     public ResponseEntity<Void> registerNewUserAccount(@RequestBody UserDto accountDto){

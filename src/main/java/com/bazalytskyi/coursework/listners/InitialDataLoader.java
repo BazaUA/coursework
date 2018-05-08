@@ -9,7 +9,6 @@ import com.bazalytskyi.coursework.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -28,8 +27,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     @Autowired
     private IPrivilegeDAO privilegeRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -50,7 +49,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         RoleEntity adminRole = roleRepository.findByName("ROLE_ADMIN");
         UserEntity user = new UserEntity();
         user.setUsername("Test");
-        user.setPassword(passwordEncoder.encode("test"));
+        user.setPassword("test");
         user.setRole(adminRole);
         user.setEnabled(true);
         userRepository.save(user);
