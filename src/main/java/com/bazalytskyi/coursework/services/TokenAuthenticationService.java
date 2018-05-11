@@ -27,7 +27,7 @@ public class TokenAuthenticationService implements ITokenAuthenticationService {
 //    Request request;
 
     public void addAuthentication(HttpServletResponse response, SessionUser userPrincipal) {
-        Cookie cookie = new Cookie("access_token", tokenHandler.createAccessToken(userPrincipal));
+        Cookie cookie = new Cookie(ACCESS_TOKEN, tokenHandler.createAccessToken(userPrincipal));
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         //cookie.setSecure(request.isSecure());
@@ -35,7 +35,7 @@ public class TokenAuthenticationService implements ITokenAuthenticationService {
     }
 
     public Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        Cookie tokenCookie = WebUtils.getCookie(request, "access_token");
+        Cookie tokenCookie = WebUtils.getCookie(request, ACCESS_TOKEN);
         String accessToken;
         if (tokenCookie != null && !(accessToken = tokenCookie.getValue()).isEmpty()) {
             try {

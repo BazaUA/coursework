@@ -2,14 +2,11 @@ package com.bazalytskyi.coursework.jwt;
 
 import com.bazalytskyi.coursework.dao.RefreshTokenDao;
 import com.bazalytskyi.coursework.entities.SessionUser;
-import com.bazalytskyi.coursework.entities.UserEntity;
 import com.bazalytskyi.coursework.services.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -21,7 +18,8 @@ import java.util.concurrent.TimeUnit;
 public class TokenHandler {
     @Autowired
     private RefreshTokenDao refreshTokenDao;
-    private UserService databaseUserDetailsService;
+    @Autowired
+    private UserService userService;
     private String USER_ID = "user_id";
     private String AUTHORITIES = "authorities";
 
@@ -34,14 +32,13 @@ public class TokenHandler {
         final Date now = new Date();
         if (refreshToken == null) {
             refreshToken = UUID.randomUUID().toString();
+            refreshTokenDao.remove(userPrincipal.getUsername());
             refreshTokenDao.insert(userPrincipal.getUsername(), refreshToken, now.getTime() + TimeUnit.HOURS.toMillis(1L));
         }
 
-        UserEntity entity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         Claims claims = Jwts.claims().setSubject(userPrincipal.getUsername());
         claims.put(USER_ID, String.valueOf(userPrincipal.getUser().getId()));
-        claims.put(AUTHORITIES, userPrincipal.getAuthorities());
+        claims.put(AUTHORITIES, userPrincipal.getAuthorities().get(0).getAuthority());
         return Jwts.builder()
                 .setClaims(claims)
                 .setId(refreshToken)
@@ -56,17 +53,14 @@ public class TokenHandler {
                 .setSigningKey("some-random-secret-key")
                 .parseClaimsJws(token)
                 .getBody();
+        String stringAuth = (String) claims.get(AUTHORITIES);
         SessionUser user = new SessionUser(Long.parseLong((String) claims.get(USER_ID)),
                 claims.getSubject(),
-                AuthorityUtils.commaSeparatedStringToAuthorityList((String) claims.get(AUTHORITIES))
+               stringAuth
         );
-        parseSpecificAccessDetails(user, claims);
         return user;
     }
 
-    private void parseSpecificAccessDetails(SessionUser user, Claims claims) {
-
-    }
 
     public SessionUser updateSessionUser(Claims claims) {
         String refreshToken = claims.getId();
@@ -76,6 +70,6 @@ public class TokenHandler {
         if (updated == 0) {
             throw new JwtException("Token is expired or missing");
         }
-        return (SessionUser) databaseUserDetailsService.loadUserByUsername(username);
+        return (SessionUser) userService.loadUserByUsername(username);
     }
 }

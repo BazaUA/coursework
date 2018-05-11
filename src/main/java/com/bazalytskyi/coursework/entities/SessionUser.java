@@ -1,31 +1,30 @@
 package com.bazalytskyi.coursework.entities;
 
-import com.bazalytskyi.coursework.services.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
 public class SessionUser implements UserDetails {
     private UserEntity user;
-    @Autowired
-    private IUserService userService;
 
     public SessionUser(UserEntity user){
         this.user = user;
     }
 
-    public SessionUser(long id, String subject, List<GrantedAuthority> grantedAuthorities) {
-        this.user=userService.getUserById(id);
+    public SessionUser(long id, String subject, String grantedAuthorities) {
+        UserEntity user = new UserEntity();
+        user.setId(id);
+        user.setRole(new RoleEntity(grantedAuthorities));
+        user.setUsername(subject);
+        this.user=user;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public List<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
             authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));

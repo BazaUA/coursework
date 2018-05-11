@@ -34,4 +34,11 @@ public class RefreshTokenDao implements IRefreshTokenDao {
                 + "AND token = ?";
         return jdbcTemplate.update(sql, username, token);
     }
+
+    @Override
+    public int remove(String username) {
+        String sql = "DELETE FROM refresh_token "
+                + "WHERE username = ? ";
+        return jdbcTemplate.update(sql, username);
+    }
 }

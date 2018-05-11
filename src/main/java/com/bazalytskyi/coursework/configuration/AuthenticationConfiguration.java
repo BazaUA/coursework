@@ -1,6 +1,6 @@
 package com.bazalytskyi.coursework.configuration;
 
-import com.bazalytskyi.coursework.services.CustomUserDetailsService;
+import com.bazalytskyi.coursework.jwt.TokenHandler;
 import com.bazalytskyi.coursework.services.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -10,14 +10,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 
 @Configuration
 @EnableWebSecurity
 public class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
     @Autowired
     SecurityProperties security;
 
@@ -30,26 +30,28 @@ public class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        http
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .addFilterBefore(new StatelessAuthenticationFilter(tokenAuthenticationService()), UsernamePasswordAuthenticationFilter.class)
-                .authorizeRequests()
-                .antMatchers("/signup").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/").permitAll()
+        http.authorizeRequests()
+                //Ресурсы доступные анонимным пользователям
+                .antMatchers( "/login","/signup","/signin").permitAll()
+                //Все остальные доступны только после аутентификации
+                .anyRequest().authenticated()
                 .and()
-                .formLogin().defaultSuccessUrl("/",true)
-                .loginProcessingUrl("/login").and()
+                .formLogin().loginPage("/login")
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(new StatelessAuthenticationFilter(tokenAuthenticationService()), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable();
-        //.invalidateHttpSession(true)
-        //.deleteCookies("JSESSIONID");
-
     }
 
     @Bean
     public TokenAuthenticationService tokenAuthenticationService() {
         return new TokenAuthenticationService();
+    }
+
+    @Bean
+    public TokenHandler tokenHandler() {
+        return new TokenHandler();
     }
 //
 //    @Bean
@@ -59,7 +61,10 @@ public class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 //        authenticationProvider.setPasswordEncoder(encoder());
 //        return authenticationProvider;
 //    }
-
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
 
 

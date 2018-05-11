@@ -6,6 +6,7 @@ import com.bazalytskyi.coursework.entities.SessionUser;
 import com.bazalytskyi.coursework.entities.UserDto;
 import com.bazalytskyi.coursework.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,8 +14,8 @@ public class UserService implements IUserService {
     @Autowired
     IUserDAO userDao;
 
-//    @Autowired
-//    PasswordEncoder passwordEncoder;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     IUserDAO userDAO;
@@ -33,7 +34,7 @@ public class UserService implements IUserService {
 
         user.setUsername(accountDto.getUsername());
 
-        user.setPassword(/*passwordEncoder.encode*/(accountDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
         user.setRole(roleDAO.findByName(accountDto.getRole()));
         return userDAO.save(user);
@@ -47,7 +48,23 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public UserEntity getUserByUsername(String username) {
+        UserEntity userEntity = userDAO.findByUsername(username);
+
+        return userEntity;
+    }
+
+    @Override
     public UserEntity getUserById(long id){
         return userDAO.getOne(id);
+    }
+
+    @Override
+    public UserEntity getUser(String username, String existingPassword) {
+       UserEntity userEntity= userDAO.findByUsername(username);
+       if(userEntity!=null&&passwordEncoder.matches(existingPassword,userEntity.getPassword()))
+           return userEntity;
+       else
+           return null;
     }
 }

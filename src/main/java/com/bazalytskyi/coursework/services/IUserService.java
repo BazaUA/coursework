@@ -10,5 +10,9 @@ public interface IUserService {
 
     SessionUser loadUserByUsername(String username);
 
+    UserEntity getUserByUsername(String username);
+
     UserEntity getUserById(long id);
+
+    UserEntity getUser(String email, String pass);
 }

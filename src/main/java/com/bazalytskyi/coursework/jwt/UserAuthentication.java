@@ -4,11 +4,11 @@ import com.bazalytskyi.coursework.entities.SessionUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.security.auth.Subject;
 import java.util.Collection;
 
 public class UserAuthentication implements Authentication {
     private SessionUser user;
+    private boolean authenticated = true;
     public UserAuthentication(SessionUser user) {
         this.user=user;
     }
@@ -20,7 +20,7 @@ public class UserAuthentication implements Authentication {
 
     @Override
     public Object getCredentials() {
-        return null;
+        return user.getPassword();
     }
 
     @Override
@@ -30,17 +30,17 @@ public class UserAuthentication implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return null;
+        return user;
     }
 
     @Override
     public boolean isAuthenticated() {
-        return false;
+        return authenticated;
     }
 
     @Override
     public void setAuthenticated(boolean b) throws IllegalArgumentException {
-
+        this.authenticated = b;
     }
 
     @Override
@@ -48,8 +48,4 @@ public class UserAuthentication implements Authentication {
         return user.getUsername();
     }
 
-    @Override
-    public boolean implies(Subject subject) {
-        return false;
-    }
 }

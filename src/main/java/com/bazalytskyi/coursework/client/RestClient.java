@@ -13,9 +13,9 @@ public class RestClient {
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:8082/signup";
         UserEntity obj = new UserEntity();
-        obj.setEmail("vb");
+        obj.setEmail("baza@gmail.com");
         obj.setPassword("111");
-        obj.setUsername("Baza");
+        obj.setUsername("baza");
 
 
         HttpEntity<UserEntity> requestEntity = new HttpEntity<UserEntity>(obj, headers);
