@@ -1,4 +1,4 @@
-package com.bazalytskyi.coursework.entities;
+package com.bazalytskyi.coursework.dto;
 
 public class UserDto {
     private String username;

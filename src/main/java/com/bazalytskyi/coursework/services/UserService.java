@@ -2,8 +2,8 @@ package com.bazalytskyi.coursework.services;
 
 import com.bazalytskyi.coursework.dao.IRoleDAO;
 import com.bazalytskyi.coursework.dao.IUserDAO;
-import com.bazalytskyi.coursework.entities.SessionUser;
-import com.bazalytskyi.coursework.entities.UserDto;
+import com.bazalytskyi.coursework.entities.CustomUserDetails;
+import com.bazalytskyi.coursework.dto.UserDto;
 import com.bazalytskyi.coursework.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,10 +26,6 @@ public class UserService implements IUserService {
 
     @Override
     public UserEntity registerNewUserAccount(UserDto accountDto){
-//        if (emailExist(accountDto.getEmail())) {
-//            throw new EmailExistsException
-//                    ("There is an account with that email adress: " + accountDto.getEmail());
-//        }
         UserEntity user = new UserEntity();
 
         user.setUsername(accountDto.getUsername());
@@ -41,9 +37,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public SessionUser loadUserByUsername(String username) {
+    public CustomUserDetails loadUserByUsername(String username) {
         UserEntity userEntity = userDAO.findByUsername(username);
-        SessionUser user = new SessionUser(userEntity);
+        CustomUserDetails user = new CustomUserDetails(userEntity);
         return user;
     }
 
@@ -60,7 +56,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserEntity getUser(String username, String existingPassword) {
+    public UserEntity getUserByLoginAndPassword(String username, String existingPassword) {
        UserEntity userEntity= userDAO.findByUsername(username);
        if(userEntity!=null&&passwordEncoder.matches(existingPassword,userEntity.getPassword()))
            return userEntity;

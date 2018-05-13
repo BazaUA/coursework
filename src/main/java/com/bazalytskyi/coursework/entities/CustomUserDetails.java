@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SessionUser implements UserDetails {
+public class CustomUserDetails implements UserDetails {
     private UserEntity user;
 
-    public SessionUser(UserEntity user){
+    public CustomUserDetails(UserEntity user){
         this.user = user;
     }
 
-    public SessionUser(long id, String subject, String grantedAuthorities) {
+    public CustomUserDetails(long id, String subject, String grantedAuthorities) {
         UserEntity user = new UserEntity();
         user.setId(id);
         user.setRole(new RoleEntity(grantedAuthorities));
@@ -64,5 +64,10 @@ public class SessionUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.isEnabled();
+    }
+
+    @Override
+    public String toString() {
+        return this.getUsername();
     }
 }

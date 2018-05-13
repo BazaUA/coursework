@@ -1,16 +1,17 @@
-package com.bazalytskyi.coursework.jwt;
+package com.bazalytskyi.coursework.auth;
 
-import com.bazalytskyi.coursework.entities.SessionUser;
+import com.bazalytskyi.coursework.entities.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
 public class UserAuthentication implements Authentication {
-    private SessionUser user;
+    private CustomUserDetails user;
     private boolean authenticated = true;
-    public UserAuthentication(SessionUser user) {
-        this.user=user;
+
+    public UserAuthentication(CustomUserDetails user) {
+        this.user = user;
     }
 
     @Override
