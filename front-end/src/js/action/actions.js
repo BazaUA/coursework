@@ -1,54 +1,55 @@
-import axios from "axios";
 import base64 from "base-64";
+import axios from "axios";
 import utf8 from "utf8";
 
 
-
-export function isAuth() {   
-  return function(dispatch) {                
-     let url =  'http://localhost:8082/home'
-     var config = {
-      headers: {'Authorization':  'Token: ' + localStorage.getItem( "token" )}
-    };
-
-     axios.get(url, config)
-        .then((response) => {
-          dispatch({type: "IS_AUTHENTICATED", payload: response.data})
-        })
-        .catch((err) => {
-          dispatch({type: "IS_NOT_AUTHENTICATED", payload: ''})
-        })
-    }  
-}
-
 export function login(username, password) {
-  if(username && password) {
-    return function(dispatch) {            
-     let url =  'http://localhost:8082/signin?username=' + username +  '&password=' + base64.encode(utf8.encode(password))    
-     axios.post(url)
-        .then((response) => {    
-          localStorage.removeItem( "token" )       
-          localStorage.setItem( "token", response.data.token );                
-          dispatch({type: "LOGIN_SUCCESS", payload: response.data}) 
-        })
-        .catch((err) => {
-          dispatch({type: "LOGIN_FAILED", payload: err})
-        })
+    if (username && password) {
+        return function (result) {
+            var route = 'http://localhost:8082/signin?username='+ username +'&password='+base64.encode(utf8.encode(password))
+            axios.post(route)
+                .then((resp) => {
+                    localStorage.removeItem("token")
+                    localStorage.setItem("token", resp.data.token);
+                    result({type: "SUCCESS", payload: resp.data})
+                })
+                .catch((error) => {
+                    result({type: "FAILED", payload: error})
+                })
+        }
     }
-  }
-  return {
-    type: "LOGIN_EMPTY",
-    payload: {
-      message : "Empty username or password.",
+
+    return {
+        type: "EMPTY",
+
+        payload: {
+            message: "Empty some data",
+        }
     }
-  }
 }
 
 
-export function logout() {   
-  localStorage.removeItem( "token" )   
-  return {
-    type: "IS_NOT_AUTHENTICATED",
-    payload: ''
-  }
+export function isAuth() {
+    return function (result) {
+        var route = 'http://localhost:8082/home'
+        var heder = {
+            headers: {'Authorization': 'Token: ' + localStorage.getItem("token")}
+        };
+
+        axios.get(route, heder)
+            .then((res) => {
+                result({type: "IS_AUTH", payload: res.data})
+            })
+            .catch((error) => {
+                result({type: "IS_NOT_AUTH", payload: ""})
+            })
+    }
+}
+
+
+
+
+export function logout() {
+    localStorage.removeItem("token");
+    return {type: "IS_NOT_AUTH", payload: ""};
 }
