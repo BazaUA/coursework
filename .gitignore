@@ -1,4 +1,6 @@
 target/
+bin/
+
 !.mvn/wrapper/maven-wrapper.jar
 pom.xml.tag
 pom.xml.releaseBackup
@@ -34,3 +36,4 @@ dist/
 nbdist/
 .nb-gradle/
 .mvm/
+

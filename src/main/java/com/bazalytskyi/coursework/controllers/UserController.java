@@ -60,7 +60,6 @@ public class UserController {
         Map<String, Object> result = new HashMap<String, Object>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            System.out.println(authentication.getDetails());
             Map<String, Boolean> authorizations = new HashMap();
             for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
                 authorizations.put(grantedAuthority.getAuthority(), Boolean.TRUE);
