@@ -1,6 +1,6 @@
 import React from "react"
 import {Alert} from 'react-bootstrap';
-import {isAuth} from "../action/actions";
+import {isAuth} from "./actions";
 import Login from './login.jsx';
 import ComplateLogin from './complateLogin.jsx';
 import {connect} from "react-redux"

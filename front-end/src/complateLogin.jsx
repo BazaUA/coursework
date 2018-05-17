@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from "react-redux"
-import {logout} from "../action/actions";
+import {logout} from "./actions";
 import {Alert} from 'react-bootstrap';
 import {Button} from 'react-bootstrap';
 

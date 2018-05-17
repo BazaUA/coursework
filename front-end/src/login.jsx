@@ -7,7 +7,7 @@ import {ControlLabel} from 'react-bootstrap';
 import {Panel} from 'react-bootstrap';
 import {FormControl} from 'react-bootstrap';
 import {Button} from 'react-bootstrap';
-import {login} from "../action/actions";
+import {login} from "./actions";
 
 @connect((my_store) => {
     return {
