@@ -16,35 +16,34 @@ import java.util.concurrent.TimeUnit;
 public class TokenHandler {
     @Autowired
     private UserService userService;
-    private String USER_ID = "user_id";
-    private String AUTHORITIES = "authorities";
+    private String USER = "user_id";
+    private String ROLES = "roles";
+    private String key = "random-key";
 
 
     public String createAccessToken(CustomUserDetails userPrincipal) {
         final Date now = new Date();
-
         Claims claims = Jwts.claims().setSubject(userPrincipal.getUsername());
-        claims.put(USER_ID, String.valueOf(userPrincipal.getUser().getId()));
-        claims.put(AUTHORITIES, userPrincipal.getAuthorities().get(0).getAuthority());
+        claims.put(USER, String.valueOf(userPrincipal.getUser().getId()));
+        claims.put(ROLES, userPrincipal.getAuthorities().get(0).getAuthority());
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + TimeUnit.MINUTES.toMillis(10L)))
-                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, "some-random-secret-key")
+                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, key)
                 .compact();
     }
 
     public CustomUserDetails parseSessionUser(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey("some-random-secret-key")
+                .setSigningKey(key)
                 .parseClaimsJws(token)
                 .getBody();
-        String stringAuth = (String) claims.get(AUTHORITIES);
-        CustomUserDetails user = new CustomUserDetails(Long.parseLong((String) claims.get(USER_ID)),
+        String authorities = (String) claims.get(ROLES);
+        CustomUserDetails user = new CustomUserDetails(Long.parseLong((String) claims.get(USER)),
                 claims.getSubject(),
-                stringAuth
+                authorities
         );
         return user;
     }
-
 }

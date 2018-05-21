@@ -43,7 +43,7 @@ public class UserController {
     @PostMapping(value = "/signin", produces = "application/json")
     public HttpEntity<Map> login(HttpServletResponse response, @RequestParam String username, @RequestParam String password) {
         String encodePass = new String(Base64.getDecoder().decode(password));
-        UserEntity userEntity = userService.getUserByLoginAndPassword(username, encodePass);
+        UserEntity userEntity = userService.getUserByLoginAndPassword(  username, encodePass);
         Map<String, Object> result = new HashMap<String, Object>();
         if (userEntity == null) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);

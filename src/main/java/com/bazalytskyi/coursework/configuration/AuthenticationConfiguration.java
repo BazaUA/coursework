@@ -29,7 +29,7 @@ public class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().authorizeRequests()
-                .antMatchers( "/signup","/signin","/logout","/home","/").permitAll()
+                .antMatchers( "/signup","/signin","/logout").permitAll()
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
